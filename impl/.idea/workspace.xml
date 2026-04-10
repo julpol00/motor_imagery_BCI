@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c9dc4a8a-21a1-49f1-be18-c88cfce23ecb" name="Changes" comment="" />
+    <list default="true" id="c9dc4a8a-21a1-49f1-be18-c88cfce23ecb" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -20,6 +22,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "julpol00"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/julpol00/motor_imagery_BCI.git",
+    "accountId": "e3d1b3bc-0599-491a-aed0-0332fe314d7e"
+  }
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2
 }</component>
@@ -35,7 +49,7 @@
     "Python.models.executor": "Run",
     "Python.preprocessing.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
+    "git-widget-placeholder": "main",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -168,7 +182,7 @@
       <workItem from="1774984111382" duration="3459000" />
       <workItem from="1775555968968" duration="15233000" />
       <workItem from="1775647516308" duration="837000" />
-      <workItem from="1775648372454" duration="13496000" />
+      <workItem from="1775648372454" duration="14340000" />
     </task>
     <servers />
   </component>
