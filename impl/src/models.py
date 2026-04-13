@@ -96,15 +96,16 @@ def eval_split(name, X, y, model):
     print(f"\nConfusion matrix:")
     print(cm_df)
 
-def train_and_test_model(X_train, X_test, y_train, y_test, model):
+def train_and_test_model(X_train, X_test, y_train, y_test, model, gridSearch = False):
 
     model.fit(X_train, y_train)
 
     eval_split("train", X_train, y_train, model)
     eval_split("test",  X_test,  y_test, model)
 
-    print("\n== GridSearchCV ==")
-    print(f"Best params: {model.best_params_}")
+    if gridSearch == True:
+        print("\n== GridSearchCV ==")
+        print(f"Best params: {model.best_params_}")
 
     return model
 
@@ -124,4 +125,16 @@ MODEL_SVC = Pipeline(steps=[
     ('reshape', FunctionTransformer(reshape_eeg)),
     ('scaler', StandardScaler()),
     ('svc', SVC(probability=True, cache_size=1000))
+])
+
+MODEL_LDA_BEST = Pipeline(steps=[
+    ('reshape', FunctionTransformer(reshape_eeg)),
+    ('scaler', StandardScaler()),
+    ('lda', LinearDiscriminantAnalysis(solver='lsqr', shrinkage=0.9))
+])
+
+MODEL_SVC_BEST = Pipeline(steps=[
+    ('reshape', FunctionTransformer(reshape_eeg)),
+    ('scaler', StandardScaler()),
+    ('svc', SVC(probability=True))
 ])
