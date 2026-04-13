@@ -10,6 +10,9 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler, FunctionTransformer
 from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier
+from xgboost import XGBClassifier
+from lightgbm import LGBMClassifier
 
 # This function divides the dataset into training and test sections while maintaining
 # group consistency. This prevents data from the same patient from being sent to both
@@ -82,11 +85,11 @@ def get_X_and_Y_from_epochs(train_list, test_list, events, picks=None, t_min=0.0
     return X_train, X_test, y_train, y_test
 
 
-def eval_split(name, X, y, model):
+def eval_split(mode, X, y, model):
     y_pred = model.predict(X)
     cm = confusion_matrix(y, y_pred)
 
-    print(f"\n== {name.upper()} ==")
+    print(f"\n== {mode.upper()} ==")
     print(f"AUC      : {roc_auc_score(y, model.predict_proba(X)[:, 1]):.4f}")
     print(f"Accuracy : {accuracy_score(y, y_pred):.4f}")
     print(f"F1       : {f1_score(y, y_pred, pos_label=1):.4f}")
@@ -96,10 +99,11 @@ def eval_split(name, X, y, model):
     print(f"\nConfusion matrix:")
     print(cm_df)
 
-def train_and_test_model(X_train, X_test, y_train, y_test, model, gridSearch = False):
+def train_and_test_model(X_train, X_test, y_train, y_test, model, model_name, gridSearch = False):
 
     model.fit(X_train, y_train)
 
+    print(f"\n==== {model_name.upper()} ====")
     eval_split("train", X_train, y_train, model)
     eval_split("test",  X_test,  y_test, model)
 
@@ -126,6 +130,26 @@ MODEL_SVC = Pipeline(steps=[
     ('scaler', StandardScaler()),
     ('svc', SVC(probability=True, cache_size=1000))
 ])
+
+MODEL_RF = Pipeline(steps=[
+    ('reshape', FunctionTransformer(reshape_eeg)),
+    ('scaler', StandardScaler()),
+    ('rf', RandomForestClassifier(n_estimators=100, random_state=42))
+])
+
+MODEL_XGB = Pipeline(steps=[
+    ('reshape', FunctionTransformer(reshape_eeg)),
+    ('scaler', StandardScaler()),
+    ('xgb', XGBClassifier(n_estimators=100, learning_rate=0.1, random_state=42))
+])
+
+MODEL_LGBM = Pipeline(steps=[
+    ('reshape', FunctionTransformer(reshape_eeg)),
+    ('scaler', StandardScaler()),
+    ('lgbm', LGBMClassifier(n_estimators=100, learning_rate=0.1, random_state=42))
+])
+
+# -----------------------------------------------------------------
 
 MODEL_LDA_BEST = Pipeline(steps=[
     ('reshape', FunctionTransformer(reshape_eeg)),
