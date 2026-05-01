@@ -20,11 +20,15 @@ CHANNELS_NEW_NAMES_DICT = {
 }
 
 ### DIR PATH
-REAL_MOTION_PREPROCESSED_PATH = "D:\inżynierka\motor imagery BCI\data\\real_motion\preprocessed"
-IMAGERY_MOTION_PREPROCESSED_PATH = "D:\inżynierka\motor imagery BCI\data\imagine_motion\preprocessed"
-REAL_MOTION_RAW_PATH = "D:\inżynierka\motor imagery BCI\data\\real_motion\\raw"
-IMAGERY_MOTION_RAW_PATH = "D:\inżynierka\motor imagery BCI\data\\imagery_motion\\raw"
+REAL_MOTION_PREPROCESSED_PATH     = r"D:\inżynierka\motor imagery BCI\data\real_motion\preprocessed"
+IMAGERY_MOTION_PREPROCESSED_PATH  = r"D:\inżynierka\motor imagery BCI\data\imagine_motion\preprocessed"
+REAL_MOTION_RAW_PATH               = r"D:\inżynierka\motor imagery BCI\data\real_motion\raw"
+IMAGERY_MOTION_RAW_PATH            = r"D:\inżynierka\motor imagery BCI\data\imagery_motion\raw"
 FILE_PATTERN = 's*.edf-epo.fif'
+
+IMAGERY_MOTION_ERD_ERS_PATH = r"D:\inżynierka\motor imagery BCI\data\features\imagery_motion\ERD_ERS"
+REAL_MOTION_ERD_ERS_PATH    = r"D:\inżynierka\motor imagery BCI\data\features\real_motion\ERD_ERS"
+ERD_ERS_FILE_PATTERN        = 's*_erd_ers.npz'
 
 ### PARAM GRIDS
 PARAM_GRID_LDA = {
