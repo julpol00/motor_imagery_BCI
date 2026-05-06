@@ -19,10 +19,22 @@ CHANNEL_PAIRS = [
     (SELECTED_CHANNELS.index('FC1'), SELECTED_CHANNELS.index('FC2')),
 ]
 
+MRP_WINDOWS = [
+    (-2.0, -1.5),
+    (-1.5, -1.0),
+    (-1.0, -0.5),
+    (-0.5,  0.0),
+    ( 0.0,  0.5),
+    ( 0.5,  1.0),
+    ( 1.0,  1.5),
+    ( 1.5,  2.0),
+]
+
+MRP_SLOPE_WINDOW = (-0.5, 0.5)
 
 def compute_band_power(X, sfreq, bands=FREQ_BANDS):
 
-    #  X: (n_epochs, n_channels, n_times)
+    #  X (epochs, channels, times)
     n_epochs, n_channels, _ = X.shape
     band_powers = np.zeros((n_epochs, n_channels, len(bands)))
 
@@ -31,7 +43,6 @@ def compute_band_power(X, sfreq, bands=FREQ_BANDS):
         band_powers[:, :, i] = psds.mean(axis=-1)
 
     return band_powers
-
 
 def compute_lateralization(band_powers, channel_pairs=CHANNEL_PAIRS):
 
@@ -61,7 +72,6 @@ def extract_erd_ers_from_epochs(epochs, picks=SELECTED_CHANNELS, t_min=0.2, t_ma
 
     return X, y
 
-
 def save_erd_ers_features(input_dir, output_dir, file_pattern=cfg.FILE_PATTERN,
                           picks=SELECTED_CHANNELS, t_min=0.2, t_max=2.0):
 
@@ -77,6 +87,66 @@ def save_erd_ers_features(input_dir, output_dir, file_pattern=cfg.FILE_PATTERN,
 
         epochs = mne.read_epochs(file_path, preload=True, verbose=False)
         X, y = extract_erd_ers_from_epochs(epochs, picks, t_min, t_max)
+
+        np.savez(output_path, X=X, y=y)
+        print(f"  Saved: {os.path.basename(output_path)}  shape: {X.shape}")
+
+def _window_mean(data, times, tmin, tmax):
+    mask = (times >= tmin) & (times <= tmax)
+    return data[:, :, mask].mean(axis=-1)  # (n_epochs, n_channels)
+
+def extract_mrp_features(epochs, picks=SELECTED_CHANNELS):
+    data_t1 = epochs['T1'].get_data(picks=picks)
+    data_t2 = epochs['T2'].get_data(picks=picks)
+    X_raw = np.concatenate([data_t1, data_t2], axis=0)  # (n_epochs, n_channels, n_times)
+    y = np.concatenate([np.zeros(len(data_t1)), np.ones(len(data_t2))])
+    times = epochs.times
+
+    features = []
+
+    # 1. Mean amplitude
+    window_means = []
+    for tmin, tmax in MRP_WINDOWS:
+        wm = _window_mean(X_raw, times, tmin, tmax)
+        window_means.append(wm)
+        features.append(wm)
+
+    # 2. Lateralization per window (C4-C3, CP2-CP1, FC2-FC1)
+    left_indices  = [left  for left, right in CHANNEL_PAIRS]
+    right_indices = [right for left, right in CHANNEL_PAIRS]
+    for wm in window_means:
+        lat = wm[:, right_indices] - wm[:, left_indices]
+        features.append(lat)
+
+    # 3. Slope
+    slope_mask = (times >= MRP_SLOPE_WINDOW[0]) & (times <= MRP_SLOPE_WINDOW[1])
+    t_slope = times[slope_mask]
+    t_c = t_slope - t_slope.mean()
+    t_var = (t_c ** 2).sum()
+    data_slope = X_raw[:, :, slope_mask]  # (epochs, channels, times)
+    x_c = data_slope - data_slope.mean(axis=-1, keepdims=True)
+    slopes = (x_c * t_c).sum(axis=-1) / t_var
+    features.append(slopes)
+
+    X = np.hstack(features)
+    return X, y
+
+
+def save_mrp_features(input_dir, output_dir, file_pattern=cfg.FILE_PATTERN,
+                      picks=SELECTED_CHANNELS):
+
+    os.makedirs(output_dir, exist_ok=True)
+
+    file_list = sorted(glob.glob(os.path.join(input_dir, file_pattern)))
+    print(f"Found {len(file_list)} files in {input_dir}")
+
+    for file_path in file_list:
+        fname = os.path.basename(file_path)
+        subject_run = fname.replace('.edf-epo.fif', '')
+        output_path = os.path.join(output_dir, f"{subject_run}_mrp.npz")
+
+        epochs = mne.read_epochs(file_path, preload=True, verbose=False)
+        X, y = extract_mrp_features(epochs, picks)
 
         np.savez(output_path, X=X, y=y)
         print(f"  Saved: {os.path.basename(output_path)}  shape: {X.shape}")
