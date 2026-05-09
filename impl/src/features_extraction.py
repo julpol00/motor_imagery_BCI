@@ -2,7 +2,9 @@ import os
 import glob
 import mne
 import numpy as np
+from mne.decoding import CSP
 from mne.time_frequency import psd_array_welch
+from scipy.signal import butter, filtfilt
 import src.config as cfg
 
 FREQ_BANDS = {
@@ -150,3 +152,127 @@ def save_mrp_features(input_dir, output_dir, file_pattern=cfg.FILE_PATTERN,
 
         np.savez(output_path, X=X, y=y)
         print(f"  Saved: {os.path.basename(output_path)}  shape: {X.shape}")
+
+
+# =============================================================================
+# ERD/ERS v2 — CSP + time-bins + log-ratio
+# =============================================================================
+
+_BASELINE_WINDOW = (-2.0,  0.0)
+_TASK_WINDOW     = ( 0.0,  2.0)
+_TIME_BINS       = [(0.0, 0.5), (0.5, 1.0), (1.0, 1.5), (1.5, 2.0)]
+_N_CSP           = 4
+
+
+def _bandpass(X, sfreq, fmin, fmax, order=4):
+    nyq = sfreq / 2.0
+    b, a = butter(order, [fmin / nyq, fmax / nyq], btype='band')
+    return filtfilt(b, a, X, axis=-1)
+
+
+def _apply_csp_spatial(X, csp):
+    filters = csp.filters_[:csp.n_components]   # (n_components, n_channels)
+    return np.einsum('fc,ect->eft', filters, X)
+
+
+def _slice_time(X, times, tmin, tmax):
+    mask = (times >= tmin) & (times <= tmax)
+    return X[:, :, mask]
+
+
+def _mean_power(X):
+    return np.mean(X ** 2, axis=-1)
+
+
+def _epochs_to_raw_array(epochs, picks):
+    d1 = epochs['T1'].get_data(picks=picks)
+    d2 = epochs['T2'].get_data(picks=picks)
+    X  = np.concatenate([d1, d2], axis=0)
+    y  = np.concatenate([np.zeros(len(d1)), np.ones(len(d2))])
+    return X, y
+
+
+def fit_csp_filters(epochs_train, picks=SELECTED_CHANNELS,
+                    bands=FREQ_BANDS, n_components=_N_CSP):
+
+    sfreq = epochs_train.info['sfreq']
+    times = epochs_train.times
+    X, y  = _epochs_to_raw_array(epochs_train, picks)
+
+    task_mask = (times >= _TASK_WINDOW[0]) & (times <= _TASK_WINDOW[1])
+    X_task    = X[:, :, task_mask]
+
+    csp_filters = {}
+    for band_name, (fmin, fmax) in bands.items():
+        X_bp = _bandpass(X_task, sfreq, fmin, fmax)
+        csp  = CSP(n_components=n_components, reg='ledoit_wolf',
+                   log=False, norm_trace=False)
+        csp.fit(X_bp, y)
+        csp_filters[band_name] = csp
+        print(f"  CSP fitted: {band_name} ({fmin}–{fmax} Hz)")
+
+    return csp_filters
+
+
+def extract_erd_ers_v2(epochs, csp_filters, picks=SELECTED_CHANNELS,
+                        bands=FREQ_BANDS):
+
+    sfreq    = epochs.info['sfreq']
+    times    = epochs.times
+    X_raw, y = _epochs_to_raw_array(epochs, picks)
+
+    band_blocks = []
+
+    for band_name, (fmin, fmax) in bands.items():
+        csp     = csp_filters[band_name]
+        x_bp    = _bandpass(X_raw, sfreq, fmin, fmax)
+        x_csp   = _apply_csp_spatial(x_bp, csp)         # (epochs, comp, times)
+
+        x_base  = _slice_time(x_csp, times, *_BASELINE_WINDOW)
+        p_base  = _mean_power(x_base)                    # (epochs, comp)
+
+        bin_blocks = []
+        for t_start, t_end in _TIME_BINS:
+            x_bin     = _slice_time(x_csp, times, t_start, t_end)
+            p_bin     = _mean_power(x_bin)               # (epochs, comp)
+            log_ratio = np.log(p_bin + 1e-10) - np.log(p_base + 1e-10)
+            bin_blocks.append(log_ratio)
+
+        band_blocks.append(np.hstack(bin_blocks))        # (epochs, comp*4)
+
+    return np.hstack(band_blocks), y                     # (epochs, 48)
+
+
+def save_erd_ers_features_v2(input_dir, output_dir, file_pattern=cfg.FILE_PATTERN,
+                               picks=None, bands=None):
+    if picks is None:
+        picks = SELECTED_CHANNELS
+    if bands is None:
+        bands = FREQ_BANDS
+
+    os.makedirs(output_dir, exist_ok=True)
+
+    file_list = sorted(glob.glob(os.path.join(input_dir, file_pattern)))
+    print(f"Found {len(file_list)} files in {input_dir}")
+
+    all_epochs = [mne.read_epochs(f, preload=True, verbose=False) for f in file_list]
+
+    sfreqs       = [ep.info['sfreq'] for ep in all_epochs]
+    target_sfreq = max(set(sfreqs), key=sfreqs.count)
+    all_epochs   = [
+        ep.resample(target_sfreq) if ep.info['sfreq'] != target_sfreq else ep
+        for ep in all_epochs
+    ]
+
+    epochs_all  = mne.concatenate_epochs(all_epochs)
+    csp_filters = fit_csp_filters(epochs_all, picks=picks, bands=bands)
+
+    # extract and save per file
+    for file_path, epochs in zip(file_list, all_epochs):
+        fname       = os.path.basename(file_path)
+        subject_run = fname.replace('.edf-epo.fif', '')
+        output_path = os.path.join(output_dir, f"{subject_run}_erd_ers.npz")
+
+        features, y = extract_erd_ers_v2(epochs, csp_filters, picks=picks, bands=bands)
+        np.savez(output_path, X=features, y=y)
+        print(f"  Saved: {os.path.basename(output_path)}  shape: {features.shape}")
