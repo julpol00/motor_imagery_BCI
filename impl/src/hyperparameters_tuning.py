@@ -1,8 +1,10 @@
 import json
 import os
 
+import matplotlib.pyplot as plt
 import optuna
 from lightgbm import LGBMClassifier
+from optuna.visualization.matplotlib import plot_param_importances
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import cross_val_score
@@ -25,6 +27,12 @@ TRAIN_RATIO = 0.2
 SELECTED_CHANNELS = ['C3', 'C4', 'CP1', 'CP2', 'FC1', 'FC2']
 RESULTS_PATH = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), '..', 'results', 'best_hyperparameters.json'
+)
+BEST_RESULTS_PATH = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), '..', 'results', 'the_best_models_best_hyperparameters.json'
+)
+PLOTS_DIR = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), '..', 'results', 'plots'
 )
 
 N_TRIALS = {
@@ -68,19 +76,35 @@ DATA_CONFIGS = {
     }
 }
 
-def load_results():
-    os.makedirs(os.path.dirname(RESULTS_PATH), exist_ok=True)
-    if os.path.exists(RESULTS_PATH):
-        with open(RESULTS_PATH, 'r') as f:
+def load_results(path=RESULTS_PATH):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    if os.path.exists(path):
+        with open(path, 'r') as f:
             content = f.read().strip()
             if content:
                 return json.loads(content)
     return {}
 
 
-def save_results(results):
-    with open(RESULTS_PATH, 'w') as f:
+def save_results(results, path=RESULTS_PATH):
+    with open(path, 'w') as f:
         json.dump(results, f, indent=2)
+
+
+def save_importances_plot(study, result_key):
+    os.makedirs(PLOTS_DIR, exist_ok=True)
+    ax = plot_param_importances(study)
+    fig = ax.figure
+    ax.set_xlabel('Ważność')
+    ax.set_ylabel('Hiperparametr')
+    if ax.get_legend() is not None:
+        ax.get_legend().remove()
+    fig.set_size_inches(8, 5)
+    fig.tight_layout()
+    path = os.path.join(PLOTS_DIR, f'{result_key}_importances.png')
+    fig.savefig(path, dpi=150)
+    plt.close(fig)
+    print(f"          plot saved → {path}")
 
 
 def load_data(data_config):
@@ -197,37 +221,42 @@ OBJECTIVES = {
 }
 
 if __name__ == '__main__':
-    RUN_ONLY = ['erd_ers__imagery', 'erd_ers__real']
 
-    results = load_results()
-    configs_to_run = {k: v for k, v in DATA_CONFIGS.items() if not RUN_ONLY or k in RUN_ONLY}
+    RUN_CONFIGS = []
 
-    for data_key, data_config in configs_to_run.items():
+    results = load_results(BEST_RESULTS_PATH)
+    loaded_data_cache = {}
+
+    for model_name, data_key in RUN_CONFIGS:
+        result_key = f"{model_name}__{data_key}"
+
+        if result_key in results:
+            print(f"[{result_key}] already done  AUC={results[result_key]['best_auc']:.4f} — skipping")
+            continue
+
         print(f"\n{'='*60}")
-        print(f"Data: {data_key}")
-        X_train, X_test, y_train, y_test = load_data(data_config)
+        print(f"Running: {result_key}")
+
+        if data_key not in loaded_data_cache:
+            loaded_data_cache[data_key] = load_data(DATA_CONFIGS[data_key])
+        X_train, X_test, y_train, y_test, *_ = loaded_data_cache[data_key]
         print(f"  X_train: {X_train.shape}  X_test: {X_test.shape}")
 
-        for model_name, objective_fn in OBJECTIVES.items():
-            result_key = f"{model_name}__{data_key}"
+        objective_fn = OBJECTIVES[model_name]
+        print(f"  [{model_name:5s}] running {N_TRIALS[model_name]} trials ...", end='', flush=True)
+        study = optuna.create_study(direction='maximize')
+        study.optimize(
+            lambda trial, fn=objective_fn: fn(trial, X_train, y_train),
+            n_trials=N_TRIALS[model_name],
+        )
 
-            if result_key in results:
-                print(f"  [{model_name:5s}] already done  AUC={results[result_key]['best_auc']:.4f} — skipping")
-                continue
+        results[result_key] = {
+            'best_params': study.best_params,
+            'best_auc':    round(study.best_value, 6),
+        }
+        save_results(results, BEST_RESULTS_PATH)
+        print(f"  AUC={study.best_value:.4f}")
+        print(f"          params: {study.best_params}")
+        save_importances_plot(study, result_key)
 
-            print(f"  [{model_name:5s}] running {N_TRIALS[model_name]} trials ...", end='', flush=True)
-            study = optuna.create_study(direction='maximize')
-            study.optimize(
-                lambda trial, fn=objective_fn: fn(trial, X_train, y_train),
-                n_trials=N_TRIALS[model_name],
-            )
-
-            results[result_key] = {
-                'best_params': study.best_params,
-                'best_auc':    round(study.best_value, 6),
-            }
-            save_results(results)
-            print(f"  AUC={study.best_value:.4f}")
-            print(f"          params: {study.best_params}")
-
-    print(f"\nDone. Results save to: {RESULTS_PATH}")
+    print(f"\nDone. Results saved to: {BEST_RESULTS_PATH}")

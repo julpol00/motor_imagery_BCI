@@ -1,0 +1,1200 @@
+
+============================================================
+MODEL: LDA base imagery
+============================================================
+
+--- 5-fold GroupKFold CV ---
+  [TRAIN]
+    AUC         : 0.8414 ± 0.0040
+    Accuracy    : 0.7670 ± 0.0051
+    F1          : 0.7606 ± 0.0065
+    Precision   : 0.7753 ± 0.0039
+    Recall      : 0.7464 ± 0.0100
+  [TEST]
+    AUC         : 0.8112 ± 0.0178
+    Accuracy    : 0.7381 ± 0.0177
+    F1          : 0.7296 ± 0.0193
+    Precision   : 0.7479 ± 0.0261
+    Recall      : 0.7131 ± 0.0277
+
+--- Final Model ---
+  [TRAIN]
+    AUC         : 0.8486
+    Accuracy    : 0.7731
+    F1          : 0.7676
+    Precision   : 0.7789
+    Recall      : 0.7567
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :       1412        377
+    Actual right :        427       1328
+  [TEST]
+    AUC         : 0.7889
+    Accuracy    : 0.7172
+    F1          : 0.7029
+    Precision   : 0.7374
+    Recall      : 0.6715
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :        318         99
+    Actual right :        136        278
+
+============================================================
+MODEL: SVC base imagery
+============================================================
+
+--- 5-fold GroupKFold CV ---
+  [TRAIN]
+    AUC         : 0.8941 ± 0.0020
+    Accuracy    : 0.8115 ± 0.0040
+    F1          : 0.8068 ± 0.0049
+    Precision   : 0.8200 ± 0.0030
+    Recall      : 0.7940 ± 0.0076
+  [TEST]
+    AUC         : 0.8152 ± 0.0191
+    Accuracy    : 0.7375 ± 0.0156
+    F1          : 0.7288 ± 0.0167
+    Precision   : 0.7475 ± 0.0246
+    Recall      : 0.7117 ± 0.0238
+
+--- Final Model ---
+  [TRAIN]
+    AUC         : 0.8990
+    Accuracy    : 0.8146
+    F1          : 0.8091
+    Precision   : 0.8256
+    Recall      : 0.7932
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :       1495        294
+    Actual right :        363       1392
+  [TEST]
+    AUC         : 0.7953
+    Accuracy    : 0.7124
+    F1          : 0.7031
+    Precision   : 0.7238
+    Recall      : 0.6836
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :        309        108
+    Actual right :        131        283
+
+============================================================
+MODEL: RF base imagery
+============================================================
+
+--- 5-fold GroupKFold CV ---
+  [TRAIN]
+    AUC         : 0.9957 ± 0.0003
+    Accuracy    : 0.9692 ± 0.0019
+    F1          : 0.9690 ± 0.0019
+    Precision   : 0.9674 ± 0.0025
+    Recall      : 0.9706 ± 0.0025
+  [TEST]
+    AUC         : 0.7869 ± 0.0322
+    Accuracy    : 0.7144 ± 0.0328
+    F1          : 0.7066 ± 0.0356
+    Precision   : 0.7195 ± 0.0351
+    Recall      : 0.6942 ± 0.0377
+
+--- Final Model ---
+  [TRAIN]
+    AUC         : 0.9955
+    Accuracy    : 0.9698
+    F1          : 0.9696
+    Precision   : 0.9677
+    Recall      : 0.9715
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :       1732         57
+    Actual right :         50       1705
+  [TEST]
+    AUC         : 0.7812
+    Accuracy    : 0.7076
+    F1          : 0.6966
+    Precision   : 0.7209
+    Recall      : 0.6739
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :        309        108
+    Actual right :        135        279
+
+============================================================
+MODEL: XGB base imagery
+============================================================
+
+--- 5-fold GroupKFold CV ---
+  [TRAIN]
+    AUC         : 0.9593 ± 0.0007
+    Accuracy    : 0.8951 ± 0.0020
+    F1          : 0.8940 ± 0.0018
+    Precision   : 0.8961 ± 0.0036
+    Recall      : 0.8920 ± 0.0019
+  [TEST]
+    AUC         : 0.8056 ± 0.0274
+    Accuracy    : 0.7266 ± 0.0321
+    F1          : 0.7215 ± 0.0334
+    Precision   : 0.7288 ± 0.0357
+    Recall      : 0.7146 ± 0.0338
+
+--- Final Model ---
+  [TRAIN]
+    AUC         : 0.9601
+    Accuracy    : 0.8945
+    F1          : 0.8938
+    Precision   : 0.8908
+    Recall      : 0.8969
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :       1596        193
+    Actual right :        181       1574
+  [TEST]
+    AUC         : 0.8040
+    Accuracy    : 0.7449
+    F1          : 0.7370
+    Precision   : 0.7577
+    Recall      : 0.7174
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :        322         95
+    Actual right :        117        297
+
+============================================================
+MODEL: LGBM base imagery
+============================================================
+
+--- 5-fold GroupKFold CV ---
+  [TRAIN]
+    AUC         : 1.0000 ± 0.0000
+    Accuracy    : 1.0000 ± 0.0000
+    F1          : 1.0000 ± 0.0000
+    Precision   : 1.0000 ± 0.0000
+    Recall      : 1.0000 ± 0.0000
+  [TEST]
+    AUC         : 0.8035 ± 0.0287
+    Accuracy    : 0.7238 ± 0.0284
+    F1          : 0.7199 ± 0.0286
+    Precision   : 0.7243 ± 0.0338
+    Recall      : 0.7159 ± 0.0267
+
+--- Final Model ---
+  [TRAIN]
+    AUC         : 1.0000
+    Accuracy    : 1.0000
+    F1          : 1.0000
+    Precision   : 1.0000
+    Recall      : 1.0000
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :       1789          0
+    Actual right :          0       1755
+  [TEST]
+    AUC         : 0.7900
+    Accuracy    : 0.7040
+    F1          : 0.7000
+    Precision   : 0.7069
+    Recall      : 0.6932
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :        298        119
+    Actual right :        127        287
+
+============================================================
+MODEL: LDA base real
+============================================================
+
+--- 5-fold GroupKFold CV ---
+  [TRAIN]
+    AUC         : 0.8759 ± 0.0035
+    Accuracy    : 0.8075 ± 0.0038
+    F1          : 0.8045 ± 0.0042
+    Precision   : 0.8133 ± 0.0055
+    Recall      : 0.7959 ± 0.0065
+  [TEST]
+    AUC         : 0.8469 ± 0.0183
+    Accuracy    : 0.7777 ± 0.0175
+    F1          : 0.7728 ± 0.0224
+    Precision   : 0.7855 ± 0.0157
+    Recall      : 0.7615 ± 0.0373
+
+--- Final Model ---
+  [TRAIN]
+    AUC         : 0.8718
+    Accuracy    : 0.8011
+    F1          : 0.7981
+    Precision   : 0.8059
+    Recall      : 0.7906
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :       1425        331
+    Actual right :        364       1374
+  [TEST]
+    AUC         : 0.8627
+    Accuracy    : 0.7828
+    F1          : 0.7763
+    Precision   : 0.7981
+    Recall      : 0.7558
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :        353         83
+    Actual right :        106        328
+
+============================================================
+MODEL: SVC base real
+============================================================
+
+--- 5-fold GroupKFold CV ---
+  [TRAIN]
+    AUC         : 0.9368 ± 0.0023
+    Accuracy    : 0.8697 ± 0.0060
+    F1          : 0.8698 ± 0.0062
+    Precision   : 0.8648 ± 0.0069
+    Recall      : 0.8750 ± 0.0074
+  [TEST]
+    AUC         : 0.8529 ± 0.0212
+    Accuracy    : 0.7749 ± 0.0232
+    F1          : 0.7737 ± 0.0258
+    Precision   : 0.7734 ± 0.0251
+    Recall      : 0.7743 ± 0.0312
+
+--- Final Model ---
+  [TRAIN]
+    AUC         : 0.9321
+    Accuracy    : 0.8638
+    F1          : 0.8636
+    Precision   : 0.8602
+    Recall      : 0.8671
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :       1511        245
+    Actual right :        231       1507
+  [TEST]
+    AUC         : 0.8688
+    Accuracy    : 0.7851
+    F1          : 0.7803
+    Precision   : 0.7962
+    Recall      : 0.7650
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :        351         85
+    Actual right :        102        332
+
+============================================================
+MODEL: RF base real
+============================================================
+
+--- 5-fold GroupKFold CV ---
+  [TRAIN]
+    AUC         : 0.9980 ± 0.0003
+    Accuracy    : 0.9787 ± 0.0008
+    F1          : 0.9786 ± 0.0008
+    Precision   : 0.9776 ± 0.0014
+    Recall      : 0.9796 ± 0.0016
+  [TEST]
+    AUC         : 0.8292 ± 0.0206
+    Accuracy    : 0.7414 ± 0.0219
+    F1          : 0.7379 ± 0.0271
+    Precision   : 0.7440 ± 0.0257
+    Recall      : 0.7334 ± 0.0434
+
+--- Final Model ---
+  [TRAIN]
+    AUC         : 0.9983
+    Accuracy    : 0.9785
+    F1          : 0.9784
+    Precision   : 0.9776
+    Recall      : 0.9793
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :       1717         39
+    Actual right :         36       1702
+  [TEST]
+    AUC         : 0.8459
+    Accuracy    : 0.7609
+    F1          : 0.7506
+    Precision   : 0.7825
+    Recall      : 0.7212
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :        349         87
+    Actual right :        121        313
+
+============================================================
+MODEL: XGB base real
+============================================================
+
+--- 5-fold GroupKFold CV ---
+  [TRAIN]
+    AUC         : 0.9988 ± 0.0002
+    Accuracy    : 0.9849 ± 0.0004
+    F1          : 0.9848 ± 0.0004
+    Precision   : 0.9875 ± 0.0014
+    Recall      : 0.9822 ± 0.0013
+  [TEST]
+    AUC         : 0.8550 ± 0.0160
+    Accuracy    : 0.7686 ± 0.0170
+    F1          : 0.7672 ± 0.0218
+    Precision   : 0.7674 ± 0.0146
+    Recall      : 0.7679 ± 0.0385
+
+--- Final Model ---
+  [TRAIN]
+    AUC         : 0.9989
+    Accuracy    : 0.9837
+    F1          : 0.9835
+    Precision   : 0.9878
+    Recall      : 0.9793
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :       1735         21
+    Actual right :         36       1702
+  [TEST]
+    AUC         : 0.8694
+    Accuracy    : 0.7874
+    F1          : 0.7795
+    Precision   : 0.8074
+    Recall      : 0.7535
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :        358         78
+    Actual right :        107        327
+
+============================================================
+MODEL: LGBM base real
+============================================================
+
+--- 5-fold GroupKFold CV ---
+  [TRAIN]
+    AUC         : 1.0000 ± 0.0000
+    Accuracy    : 1.0000 ± 0.0000
+    F1          : 1.0000 ± 0.0000
+    Precision   : 1.0000 ± 0.0000
+    Recall      : 1.0000 ± 0.0000
+  [TEST]
+    AUC         : 0.8538 ± 0.0166
+    Accuracy    : 0.7718 ± 0.0184
+    F1          : 0.7709 ± 0.0209
+    Precision   : 0.7698 ± 0.0178
+    Recall      : 0.7725 ± 0.0304
+
+--- Final Model ---
+  [TRAIN]
+    AUC         : 1.0000
+    Accuracy    : 1.0000
+    F1          : 1.0000
+    Precision   : 1.0000
+    Recall      : 1.0000
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :       1756          0
+    Actual right :          0       1738
+  [TEST]
+    AUC         : 0.8713
+    Accuracy    : 0.7885
+    F1          : 0.7845
+    Precision   : 0.7976
+    Recall      : 0.7719
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :        351         85
+    Actual right :         99        335
+
+============================================================
+MODEL: LDA MRP imagery
+============================================================
+
+--- 5-fold GroupKFold CV ---
+  [TRAIN]
+    AUC         : 0.8072 ± 0.0055
+    Accuracy    : 0.7429 ± 0.0031
+    F1          : 0.7377 ± 0.0034
+    Precision   : 0.7507 ± 0.0035
+    Recall      : 0.7251 ± 0.0040
+  [TEST]
+    AUC         : 0.7933 ± 0.0241
+    Accuracy    : 0.7334 ± 0.0143
+    F1          : 0.7277 ± 0.0132
+    Precision   : 0.7421 ± 0.0210
+    Recall      : 0.7140 ± 0.0121
+
+--- Final Model ---
+  [TRAIN]
+    AUC         : 0.7991
+    Accuracy    : 0.7353
+    F1          : 0.7296
+    Precision   : 0.7418
+    Recall      : 0.7178
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :       1409        463
+    Actual right :        523       1330
+  [TEST]
+    AUC         : 0.8149
+    Accuracy    : 0.7545
+    F1          : 0.7567
+    Precision   : 0.7550
+    Recall      : 0.7584
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :        331        110
+    Actual right :        108        339
+
+============================================================
+MODEL: SVC MRP imagery
+============================================================
+
+--- 5-fold GroupKFold CV ---
+  [TRAIN]
+    AUC         : 0.8341 ± 0.0037
+    Accuracy    : 0.7634 ± 0.0042
+    F1          : 0.7613 ± 0.0057
+    Precision   : 0.7659 ± 0.0041
+    Recall      : 0.7569 ± 0.0106
+  [TEST]
+    AUC         : 0.7969 ± 0.0249
+    Accuracy    : 0.7301 ± 0.0177
+    F1          : 0.7288 ± 0.0202
+    Precision   : 0.7299 ± 0.0193
+    Recall      : 0.7280 ± 0.0269
+
+--- Final Model ---
+  [TRAIN]
+    AUC         : 0.8302
+    Accuracy    : 0.7632
+    F1          : 0.7598
+    Precision   : 0.7669
+    Recall      : 0.7528
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :       1448        424
+    Actual right :        458       1395
+  [TEST]
+    AUC         : 0.8206
+    Accuracy    : 0.7387
+    F1          : 0.7422
+    Precision   : 0.7373
+    Recall      : 0.7472
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :        322        119
+    Actual right :        113        334
+
+============================================================
+MODEL: RF MRP imagery
+============================================================
+
+--- 5-fold GroupKFold CV ---
+  [TRAIN]
+    AUC         : 0.9996 ± 0.0001
+    Accuracy    : 0.9917 ± 0.0011
+    F1          : 0.9916 ± 0.0011
+    Precision   : 0.9911 ± 0.0010
+    Recall      : 0.9922 ± 0.0014
+  [TEST]
+    AUC         : 0.7852 ± 0.0230
+    Accuracy    : 0.7139 ± 0.0228
+    F1          : 0.7112 ± 0.0283
+    Precision   : 0.7149 ± 0.0196
+    Recall      : 0.7078 ± 0.0377
+
+--- Final Model ---
+  [TRAIN]
+    AUC         : 0.9999
+    Accuracy    : 0.9957
+    F1          : 0.9957
+    Precision   : 0.9951
+    Recall      : 0.9962
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :       1863          9
+    Actual right :          7       1846
+  [TEST]
+    AUC         : 0.7928
+    Accuracy    : 0.7151
+    F1          : 0.7179
+    Precision   : 0.7156
+    Recall      : 0.7204
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :        313        128
+    Actual right :        125        322
+
+============================================================
+MODEL: XGB MRP imagery
+============================================================
+
+--- 5-fold GroupKFold CV ---
+  [TRAIN]
+    AUC         : 0.9115 ± 0.0020
+    Accuracy    : 0.8311 ± 0.0013
+    F1          : 0.8297 ± 0.0016
+    Precision   : 0.8343 ± 0.0015
+    Recall      : 0.8252 ± 0.0028
+  [TEST]
+    AUC         : 0.7953 ± 0.0217
+    Accuracy    : 0.7198 ± 0.0181
+    F1          : 0.7185 ± 0.0190
+    Precision   : 0.7198 ± 0.0214
+    Recall      : 0.7175 ± 0.0211
+
+--- Final Model ---
+  [TRAIN]
+    AUC         : 0.9101
+    Accuracy    : 0.8322
+    F1          : 0.8300
+    Precision   : 0.8366
+    Recall      : 0.8235
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :       1574        298
+    Actual right :        327       1526
+  [TEST]
+    AUC         : 0.7995
+    Accuracy    : 0.7218
+    F1          : 0.7246
+    Precision   : 0.7222
+    Recall      : 0.7271
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :        316        125
+    Actual right :        122        325
+
+============================================================
+MODEL: LGBM MRP imagery
+============================================================
+
+--- 5-fold GroupKFold CV ---
+  [TRAIN]
+    AUC         : 0.9780 ± 0.0013
+    Accuracy    : 0.9203 ± 0.0024
+    F1          : 0.9196 ± 0.0025
+    Precision   : 0.9251 ± 0.0032
+    Recall      : 0.9142 ± 0.0030
+  [TEST]
+    AUC         : 0.7941 ± 0.0257
+    Accuracy    : 0.7256 ± 0.0175
+    F1          : 0.7235 ± 0.0203
+    Precision   : 0.7268 ± 0.0185
+    Recall      : 0.7205 ± 0.0259
+
+--- Final Model ---
+  [TRAIN]
+    AUC         : 0.9772
+    Accuracy    : 0.9179
+    F1          : 0.9168
+    Precision   : 0.9238
+    Recall      : 0.9099
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :       1733        139
+    Actual right :        167       1686
+  [TEST]
+    AUC         : 0.8046
+    Accuracy    : 0.7297
+    F1          : 0.7351
+    Precision   : 0.7255
+    Recall      : 0.7450
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :        315        126
+    Actual right :        114        333
+
+============================================================
+MODEL: LDA MRP real
+============================================================
+
+--- 5-fold GroupKFold CV ---
+  [TRAIN]
+    AUC         : 0.8234 ± 0.0016
+    Accuracy    : 0.7589 ± 0.0020
+    F1          : 0.7570 ± 0.0024
+    Precision   : 0.7617 ± 0.0061
+    Recall      : 0.7525 ± 0.0097
+  [TEST]
+    AUC         : 0.8097 ± 0.0145
+    Accuracy    : 0.7485 ± 0.0185
+    F1          : 0.7462 ± 0.0185
+    Precision   : 0.7524 ± 0.0250
+    Recall      : 0.7407 ± 0.0214
+
+--- Final Model ---
+  [TRAIN]
+    AUC         : 0.8230
+    Accuracy    : 0.7550
+    F1          : 0.7516
+    Precision   : 0.7605
+    Recall      : 0.7429
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :       1462        444
+    Actual right :        488       1410
+  [TEST]
+    AUC         : 0.8260
+    Accuracy    : 0.7743
+    F1          : 0.7712
+    Precision   : 0.7819
+    Recall      : 0.7607
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :        349         94
+    Actual right :        106        337
+
+============================================================
+MODEL: SVC MRP real
+============================================================
+
+--- 5-fold GroupKFold CV ---
+  [TRAIN]
+    AUC         : 0.8519 ± 0.0024
+    Accuracy    : 0.7855 ± 0.0027
+    F1          : 0.7866 ± 0.0037
+    Precision   : 0.7811 ± 0.0026
+    Recall      : 0.7923 ± 0.0082
+  [TEST]
+    AUC         : 0.8194 ± 0.0174
+    Accuracy    : 0.7579 ± 0.0172
+    F1          : 0.7562 ± 0.0161
+    Precision   : 0.7609 ± 0.0221
+    Recall      : 0.7520 ± 0.0168
+
+--- Final Model ---
+  [TRAIN]
+    AUC         : 0.8500
+    Accuracy    : 0.7813
+    F1          : 0.7825
+    Precision   : 0.7765
+    Recall      : 0.7887
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :       1475        431
+    Actual right :        401       1497
+  [TEST]
+    AUC         : 0.8369
+    Accuracy    : 0.7833
+    F1          : 0.7762
+    Precision   : 0.8024
+    Recall      : 0.7517
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :        361         82
+    Actual right :        110        333
+
+============================================================
+MODEL: RF MRP real
+============================================================
+
+--- 5-fold GroupKFold CV ---
+  [TRAIN]
+    AUC         : 0.9960 ± 0.0002
+    Accuracy    : 0.9676 ± 0.0023
+    F1          : 0.9677 ± 0.0023
+    Precision   : 0.9646 ± 0.0036
+    Recall      : 0.9708 ± 0.0017
+  [TEST]
+    AUC         : 0.8074 ± 0.0157
+    Accuracy    : 0.7342 ± 0.0155
+    F1          : 0.7348 ± 0.0140
+    Precision   : 0.7325 ± 0.0208
+    Recall      : 0.7378 ± 0.0204
+
+--- Final Model ---
+  [TRAIN]
+    AUC         : 0.9961
+    Accuracy    : 0.9682
+    F1          : 0.9683
+    Precision   : 0.9635
+    Recall      : 0.9731
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :       1836         70
+    Actual right :         51       1847
+  [TEST]
+    AUC         : 0.8331
+    Accuracy    : 0.7517
+    F1          : 0.7448
+    Precision   : 0.7661
+    Recall      : 0.7246
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :        345         98
+    Actual right :        122        321
+
+============================================================
+MODEL: XGB MRP real
+============================================================
+
+--- 5-fold GroupKFold CV ---
+  [TRAIN]
+    AUC         : 0.9208 ± 0.0019
+    Accuracy    : 0.8416 ± 0.0024
+    F1          : 0.8420 ± 0.0025
+    Precision   : 0.8386 ± 0.0030
+    Recall      : 0.8455 ± 0.0044
+  [TEST]
+    AUC         : 0.8163 ± 0.0130
+    Accuracy    : 0.7453 ± 0.0161
+    F1          : 0.7460 ± 0.0154
+    Precision   : 0.7429 ± 0.0199
+    Recall      : 0.7493 ± 0.0164
+
+--- Final Model ---
+  [TRAIN]
+    AUC         : 0.9191
+    Accuracy    : 0.8407
+    F1          : 0.8416
+    Precision   : 0.8351
+    Recall      : 0.8483
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :       1588        318
+    Actual right :        288       1610
+  [TEST]
+    AUC         : 0.8411
+    Accuracy    : 0.7641
+    F1          : 0.7606
+    Precision   : 0.7721
+    Recall      : 0.7494
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :        345         98
+    Actual right :        111        332
+
+============================================================
+MODEL: LGBM MRP real
+============================================================
+
+--- 5-fold GroupKFold CV ---
+  [TRAIN]
+    AUC         : 0.9923 ± 0.0004
+    Accuracy    : 0.9573 ± 0.0020
+    F1          : 0.9573 ± 0.0019
+    Precision   : 0.9557 ± 0.0018
+    Recall      : 0.9589 ± 0.0023
+  [TEST]
+    AUC         : 0.8068 ± 0.0127
+    Accuracy    : 0.7304 ± 0.0192
+    F1          : 0.7308 ± 0.0160
+    Precision   : 0.7297 ± 0.0258
+    Recall      : 0.7323 ± 0.0146
+
+--- Final Model ---
+  [TRAIN]
+    AUC         : 0.9917
+    Accuracy    : 0.9561
+    F1          : 0.9561
+    Precision   : 0.9539
+    Recall      : 0.9584
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :       1818         88
+    Actual right :         79       1819
+  [TEST]
+    AUC         : 0.8424
+    Accuracy    : 0.7664
+    F1          : 0.7640
+    Precision   : 0.7719
+    Recall      : 0.7562
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :        344         99
+    Actual right :        108        335
+
+============================================================
+MODEL: LDA ERD/ERS imagery
+============================================================
+
+--- 5-fold GroupKFold CV ---
+  [TRAIN]
+    AUC         : 0.5923 ± 0.0052
+    Accuracy    : 0.5671 ± 0.0087
+    F1          : 0.5222 ± 0.0272
+    Precision   : 0.5800 ± 0.0085
+    Recall      : 0.4766 ± 0.0441
+  [TEST]
+    AUC         : 0.5506 ± 0.0152
+    Accuracy    : 0.5391 ± 0.0132
+    F1          : 0.4854 ± 0.0429
+    Precision   : 0.5467 ± 0.0063
+    Recall      : 0.4411 ± 0.0699
+
+--- Final Model ---
+  [TRAIN]
+    AUC         : 0.5905
+    Accuracy    : 0.5651
+    F1          : 0.5182
+    Precision   : 0.5762
+    Recall      : 0.4708
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :       1209        628
+    Actual right :        960        854
+  [TEST]
+    AUC         : 0.5665
+    Accuracy    : 0.5505
+    F1          : 0.5019
+    Precision   : 0.5702
+    Recall      : 0.4483
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :        279        147
+    Actual right :        240        195
+
+============================================================
+MODEL: SVC ERD/ERS imagery
+============================================================
+
+--- 5-fold GroupKFold CV ---
+  [TRAIN]
+    AUC         : 0.7190 ± 0.0037
+    Accuracy    : 0.6365 ± 0.0041
+    F1          : 0.5485 ± 0.0142
+    Precision   : 0.7200 ± 0.0056
+    Recall      : 0.4434 ± 0.0195
+  [TEST]
+    AUC         : 0.5613 ± 0.0087
+    Accuracy    : 0.5420 ± 0.0114
+    F1          : 0.4260 ± 0.0415
+    Precision   : 0.5671 ± 0.0081
+    Recall      : 0.3443 ± 0.0541
+
+--- Final Model ---
+  [TRAIN]
+    AUC         : 0.7207
+    Accuracy    : 0.6365
+    F1          : 0.5509
+    Precision   : 0.7134
+    Recall      : 0.4487
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :       1510        327
+    Actual right :       1000        814
+  [TEST]
+    AUC         : 0.5929
+    Accuracy    : 0.5633
+    F1          : 0.4659
+    Precision   : 0.6097
+    Recall      : 0.3770
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :        321        105
+    Actual right :        271        164
+
+============================================================
+MODEL: RF ERD/ERS imagery
+============================================================
+
+--- 5-fold GroupKFold CV ---
+  [TRAIN]
+    AUC         : 0.8001 ± 0.0089
+    Accuracy    : 0.7102 ± 0.0097
+    F1          : 0.6750 ± 0.0230
+    Precision   : 0.7649 ± 0.0144
+    Recall      : 0.6059 ± 0.0428
+  [TEST]
+    AUC         : 0.5683 ± 0.0029
+    Accuracy    : 0.5447 ± 0.0040
+    F1          : 0.4954 ± 0.0173
+    Precision   : 0.5544 ± 0.0146
+    Recall      : 0.4496 ± 0.0348
+
+--- Final Model ---
+  [TRAIN]
+    AUC         : 0.8018
+    Accuracy    : 0.7020
+    F1          : 0.6522
+    Precision   : 0.7763
+    Recall      : 0.5623
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :       1543        294
+    Actual right :        794       1020
+  [TEST]
+    AUC         : 0.5684
+    Accuracy    : 0.5238
+    F1          : 0.4429
+    Precision   : 0.5415
+    Recall      : 0.3747
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :        288        138
+    Actual right :        272        163
+
+============================================================
+MODEL: XGB ERD/ERS imagery
+============================================================
+
+--- 5-fold GroupKFold CV ---
+  [TRAIN]
+    AUC         : 0.7182 ± 0.0037
+    Accuracy    : 0.6591 ± 0.0050
+    F1          : 0.6415 ± 0.0141
+    Precision   : 0.6742 ± 0.0085
+    Recall      : 0.6127 ± 0.0299
+  [TEST]
+    AUC         : 0.5744 ± 0.0099
+    Accuracy    : 0.5518 ± 0.0066
+    F1          : 0.5345 ± 0.0172
+    Precision   : 0.5542 ± 0.0088
+    Recall      : 0.5172 ± 0.0334
+
+--- Final Model ---
+  [TRAIN]
+    AUC         : 0.7151
+    Accuracy    : 0.6546
+    F1          : 0.6301
+    Precision   : 0.6734
+    Recall      : 0.5921
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :       1316        521
+    Actual right :        740       1074
+  [TEST]
+    AUC         : 0.5752
+    Accuracy    : 0.5447
+    F1          : 0.5000
+    Precision   : 0.5616
+    Recall      : 0.4506
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :        273        153
+    Actual right :        239        196
+
+============================================================
+MODEL: LGBM ERD/ERS imagery
+============================================================
+
+--- 5-fold GroupKFold CV ---
+  [TRAIN]
+    AUC         : 0.8969 ± 0.0071
+    Accuracy    : 0.8188 ± 0.0056
+    F1          : 0.8172 ± 0.0066
+    Precision   : 0.8216 ± 0.0067
+    Recall      : 0.8130 ± 0.0120
+  [TEST]
+    AUC         : 0.5559 ± 0.0233
+    Accuracy    : 0.5400 ± 0.0221
+    F1          : 0.5306 ± 0.0229
+    Precision   : 0.5402 ± 0.0269
+    Recall      : 0.5216 ± 0.0224
+
+--- Final Model ---
+  [TRAIN]
+    AUC         : 0.8981
+    Accuracy    : 0.8085
+    F1          : 0.8051
+    Precision   : 0.8144
+    Recall      : 0.7960
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :       1508        329
+    Actual right :        370       1444
+  [TEST]
+    AUC         : 0.5634
+    Accuracy    : 0.5424
+    F1          : 0.5148
+    Precision   : 0.5544
+    Recall      : 0.4805
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :        258        168
+    Actual right :        226        209
+
+============================================================
+MODEL: LDA ERD/ERS real
+============================================================
+
+--- 5-fold GroupKFold CV ---
+  [TRAIN]
+    AUC         : 0.5887 ± 0.0040
+    Accuracy    : 0.5562 ± 0.0026
+    F1          : 0.6061 ± 0.0057
+    Precision   : 0.5441 ± 0.0029
+    Recall      : 0.6841 ± 0.0117
+  [TEST]
+    AUC         : 0.5584 ± 0.0053
+    Accuracy    : 0.5373 ± 0.0132
+    F1          : 0.5873 ± 0.0250
+    Precision   : 0.5311 ± 0.0152
+    Recall      : 0.6656 ± 0.0870
+
+--- Final Model ---
+  [TRAIN]
+    AUC         : 0.5844
+    Accuracy    : 0.5519
+    F1          : 0.6102
+    Precision   : 0.5403
+    Recall      : 0.7008
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :        738       1094
+    Actual right :        549       1286
+  [TEST]
+    AUC         : 0.5698
+    Accuracy    : 0.5539
+    F1          : 0.5702
+    Precision   : 0.5440
+    Recall      : 0.5991
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :        237        228
+    Actual right :        182        272
+
+============================================================
+MODEL: SVC ERD/ERS real
+============================================================
+
+--- 5-fold GroupKFold CV ---
+  [TRAIN]
+    AUC         : 0.5743 ± 0.0281
+    Accuracy    : 0.5507 ± 0.0094
+    F1          : 0.5743 ± 0.1353
+    Precision   : 0.5508 ± 0.0306
+    Recall      : 0.6816 ± 0.2409
+  [TEST]
+    AUC         : 0.5346 ± 0.0201
+    Accuracy    : 0.5159 ± 0.0166
+    F1          : 0.5212 ± 0.1834
+    Precision   : 0.5113 ± 0.0085
+    Recall      : 0.6303 ± 0.2768
+
+--- Final Model ---
+  [TRAIN]
+    AUC         : 0.5843
+    Accuracy    : 0.5525
+    F1          : 0.6432
+    Precision   : 0.5351
+    Recall      : 0.8060
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :        547       1285
+    Actual right :        356       1479
+  [TEST]
+    AUC         : 0.5798
+    Accuracy    : 0.5539
+    F1          : 0.6190
+    Precision   : 0.5354
+    Recall      : 0.7335
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :        176        289
+    Actual right :        121        333
+
+============================================================
+MODEL: RF ERD/ERS real
+============================================================
+
+--- 5-fold GroupKFold CV ---
+  [TRAIN]
+    AUC         : 0.7557 ± 0.0051
+    Accuracy    : 0.6823 ± 0.0039
+    F1          : 0.6800 ± 0.0143
+    Precision   : 0.6838 ± 0.0089
+    Recall      : 0.6777 ± 0.0351
+  [TEST]
+    AUC         : 0.5685 ± 0.0088
+    Accuracy    : 0.5523 ± 0.0053
+    F1          : 0.5565 ± 0.0270
+    Precision   : 0.5523 ± 0.0177
+    Recall      : 0.5678 ± 0.0719
+
+--- Final Model ---
+  [TRAIN]
+    AUC         : 0.7691
+    Accuracy    : 0.6883
+    F1          : 0.6959
+    Precision   : 0.6798
+    Recall      : 0.7128
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :       1216        616
+    Actual right :        527       1308
+  [TEST]
+    AUC         : 0.5990
+    Accuracy    : 0.5724
+    F1          : 0.5478
+    Precision   : 0.5735
+    Recall      : 0.5242
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :        288        177
+    Actual right :        216        238
+
+============================================================
+MODEL: XGB ERD/ERS real
+============================================================
+
+--- 5-fold GroupKFold CV ---
+  [TRAIN]
+    AUC         : 0.6864 ± 0.0024
+    Accuracy    : 0.6354 ± 0.0050
+    F1          : 0.6337 ± 0.0053
+    Precision   : 0.6357 ± 0.0063
+    Recall      : 0.6318 ± 0.0099
+  [TEST]
+    AUC         : 0.5654 ± 0.0086
+    Accuracy    : 0.5478 ± 0.0057
+    F1          : 0.5485 ± 0.0226
+    Precision   : 0.5481 ± 0.0167
+    Recall      : 0.5537 ± 0.0586
+
+--- Final Model ---
+  [TRAIN]
+    AUC         : 0.6886
+    Accuracy    : 0.6376
+    F1          : 0.6409
+    Precision   : 0.6356
+    Recall      : 0.6463
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :       1152        680
+    Actual right :        649       1186
+  [TEST]
+    AUC         : 0.6002
+    Accuracy    : 0.5724
+    F1          : 0.5382
+    Precision   : 0.5768
+    Recall      : 0.5044
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :        297        168
+    Actual right :        225        229
+
+============================================================
+MODEL: LGBM ERD/ERS real
+============================================================
+
+--- 5-fold GroupKFold CV ---
+  [TRAIN]
+    AUC         : 0.9999 ± 0.0000
+    Accuracy    : 0.9969 ± 0.0003
+    F1          : 0.9969 ± 0.0003
+    Precision   : 0.9981 ± 0.0007
+    Recall      : 0.9956 ± 0.0007
+  [TEST]
+    AUC         : 0.5474 ± 0.0071
+    Accuracy    : 0.5314 ± 0.0062
+    F1          : 0.5317 ± 0.0193
+    Precision   : 0.5306 ± 0.0064
+    Recall      : 0.5346 ± 0.0402
+
+--- Final Model ---
+  [TRAIN]
+    AUC         : 0.9999
+    Accuracy    : 0.9975
+    F1          : 0.9975
+    Precision   : 0.9995
+    Recall      : 0.9956
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :       1831          1
+    Actual right :          8       1827
+  [TEST]
+    AUC         : 0.5784
+    Accuracy    : 0.5626
+    F1          : 0.5411
+    Precision   : 0.5616
+    Recall      : 0.5220
+    Confusion matrix:
+                   Pred left  Pred right
+    Actual left  :        280        185
+    Actual right :        217        237

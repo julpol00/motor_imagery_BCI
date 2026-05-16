@@ -1,114 +1,114 @@
-import src.config as cfg
-from src.models import *
-from src.data_utils import split_train_test_path_list, get_X_and_Y_from_epochs, get_X_and_Y_from_features, get_X_and_Y_random_split, train_and_test_model
+import os
 import joblib
+import numpy as np
+import src.config as cfg
+from src.models import (
+    MODEL_LDA_BASE_IMAGERY, MODEL_SVC_BASE_IMAGERY, MODEL_RF_BASE_IMAGERY,
+    MODEL_XGB_BASE_IMAGERY, MODEL_LGBM_BASE_IMAGERY,
+    MODEL_LDA_BASE_REAL, MODEL_SVC_BASE_REAL, MODEL_RF_BASE_REAL,
+    MODEL_XGB_BASE_REAL, MODEL_LGBM_BASE_REAL,
+    MODEL_LDA_MRP_IMAGERY, MODEL_SVC_MRP_IMAGERY, MODEL_RF_MRP_IMAGERY,
+    MODEL_XGB_MRP_IMAGERY, MODEL_LGBM_MRP_IMAGERY,
+    MODEL_LDA_MRP_REAL, MODEL_SVC_MRP_REAL, MODEL_RF_MRP_REAL,
+    MODEL_XGB_MRP_REAL, MODEL_LGBM_MRP_REAL,
+    MODEL_LDA_ERD_ERS_IMAGERY, MODEL_SVC_ERD_ERS_IMAGERY, MODEL_RF_ERD_ERS_IMAGERY,
+    MODEL_XGB_ERD_ERS_IMAGERY, MODEL_LGBM_ERD_ERS_IMAGERY,
+    MODEL_LDA_ERD_ERS_REAL, MODEL_SVC_ERD_ERS_REAL, MODEL_RF_ERD_ERS_REAL,
+    MODEL_XGB_ERD_ERS_REAL, MODEL_LGBM_ERD_ERS_REAL,
+)
+from src.data_utils import (
+    split_train_test_path_list, get_X_and_Y_from_epochs,
+    get_X_and_Y_from_features, train_and_test_model,
+)
 
-train_ratio = 0.2
-selected_channels = ['C3', 'C4', 'CP1', 'CP2', 'FC1', 'FC2']
-
-
-# ------------IMAGERY MOTION ---------------------
-# train_list, test_list = split_train_test_path_list(cfg.IMAGERY_MOTION_PREPROCESSED_PATH, cfg.FILE_PATTERN, train_ratio)
-# X_train, X_test, y_train, y_test = get_X_and_Y_from_epochs(train_list, test_list, ['T1','T2'], picks=selected_channels, t_min=0.2, t_max=2.0)
-#
-# # SVC
-# model_SVC_img = train_and_test_model(X_train, X_test, y_train, y_test, MODEL_SVC_BEST, "SVC img")
-# joblib.dump(model_SVC_img, r'D:\inżynierka\motor imagery BCI\impl\models\bci_model_svc_img_motion.pkl')
-#
-# # LDA
-# model_LDA_img = train_and_test_model(X_train, X_test, y_train, y_test, MODEL_LDA_BEST, "LDA img")
-# joblib.dump(model_LDA_img, r'D:\inżynierka\motor imagery BCI\impl\models\bci_model_lda_img_motion.pkl')
-#
-# # RANDOM FOREST
-# model_RF_img = train_and_test_model(X_train, X_test, y_train, y_test, MODEL_RF, "Random Forest img")
-# joblib.dump(model_RF_img, r'D:\inżynierka\motor imagery BCI\impl\models\bci_model_rf_img_motion.pkl')
-#
-# # XGBoost
-# model_XGB_img = train_and_test_model(X_train, X_test, y_train, y_test, MODEL_XGB, "XGB img")
-# joblib.dump(model_XGB_img, r'D:\inżynierka\motor imagery BCI\impl\models\bci_model_xgb_img_motion.pkl')
-#
-# # lightGBM
-# model_LGBM_img = train_and_test_model(X_train, X_test, y_train, y_test, MODEL_LGBM, "LGBM img")
-# joblib.dump(model_LGBM_img, r'D:\inżynierka\motor imagery BCI\impl\models\bci_model_lgbm_img_motion.pkl')
-#
-#
-#
-# # ----------- REAL MOTION ------------------
-# train_list, test_list = split_train_test_path_list(cfg.REAL_MOTION_PREPROCESSED_PATH, cfg.FILE_PATTERN, train_ratio)
-# X_train, X_test, y_train, y_test = get_X_and_Y_from_epochs(train_list, test_list, ['T1','T2'], picks=selected_channels, t_min=0.2, t_max=2.0)
-
-# # SVC
-# model_SVC_real = train_and_test_model(X_train, X_test, y_train, y_test, MODEL_SVC_BEST, "SVC real")
-# joblib.dump(model_SVC_real, r'D:\inżynierka\motor imagery BCI\impl\models\bci_model_svc_real_motion.pkl')
-#
-# # LDA
-# model_LDA_real = train_and_test_model(X_train, X_test, y_train, y_test, MODEL_LDA_BEST, "LDA real")
-# joblib.dump(model_LDA_real, r'D:\inżynierka\motor imagery BCI\impl\models\bci_model_lda_real_motion.pkl')
-
-# # RANDOM FOREST
-# model_RF_real = train_and_test_model(X_train, X_test, y_train, y_test, MODEL_RF, "Random Forest real")
-# joblib.dump(model_RF_real, r'D:\inżynierka\motor imagery BCI\impl\models\bci_model_rf_real_motion.pkl')
-
-# # XGBoost
-# model_XGB_real = train_and_test_model(X_train, X_test, y_train, y_test, MODEL_XGB, "XGB real")
-# joblib.dump(model_XGB_real, r'D:\inżynierka\motor imagery BCI\impl\models\bci_model_xgb_real_motion.pkl')
-#
-# # lightGBM
-# model_LGBM_real = train_and_test_model(X_train, X_test, y_train, y_test, MODEL_LGBM, "LGBM real")
-# joblib.dump(model_LGBM_real, r'D:\inżynierka\motor imagery BCI\impl\models\bci_model_lgbm_real_motion.pkl')
+MODELS_DIR   = r'D:\inżynierka\motor imagery BCI\impl\models'
+RESULTS_PATH = r'results/results.txt'
+TRAIN_RATIO      = 0.2
+SELECTED_CHANNELS = ['C3', 'C4', 'CP1', 'CP2', 'FC1', 'FC2']
 
 
-# # ============ ERD/ERS FEATURES ============
-#
-# # ----------- IMAGERY MOTION ------------------
-# X_train, X_test, y_train, y_test = get_X_and_Y_random_split(cfg.IMAGERY_MOTION_ERD_ERS_PATH, cfg.ERD_ERS_FILE_PATTERN, test_ratio=train_ratio)
-#
-# model_LDA_erd_img = train_and_test_model(X_train, X_test, y_train, y_test, MODEL_LDA_BEST, "LDA ERD/ERS img")
-# joblib.dump(model_LDA_erd_img, r'D:\inżynierka\motor imagery BCI\impl\models\bci_model_lda_erd_ers_img_motion.pkl')
-#
-# model_XGB_erd_img = train_and_test_model(X_train, X_test, y_train, y_test, MODEL_XGB, "XGB ERD/ERS img")
-# joblib.dump(model_XGB_erd_img, r'D:\inżynierka\motor imagery BCI\impl\models\bci_model_xgb_erd_ers_img_motion.pkl')
-#
-# model_LGBM_erd_img = train_and_test_model(X_train, X_test, y_train, y_test, MODEL_LGBM_REGULARIZED, "LGBM ERD/ERS img")
-# joblib.dump(model_LGBM_erd_img, r'D:\inżynierka\motor imagery BCI\impl\models\bci_model_lgbm_erd_ers_img_motion.pkl')
-#
-# # ----------- REAL MOTION ------------------
-# X_train, X_test, y_train, y_test = get_X_and_Y_random_split(cfg.REAL_MOTION_ERD_ERS_PATH, cfg.ERD_ERS_FILE_PATTERN, test_ratio=train_ratio)
-#
-# model_LDA_erd_real = train_and_test_model(X_train, X_test, y_train, y_test, MODEL_LDA_BEST, "LDA ERD/ERS real")
-# joblib.dump(model_LDA_erd_real, r'D:\inżynierka\motor imagery BCI\impl\models\bci_model_lda_erd_ers_real_motion.pkl')
-#
-# model_XGB_erd_real = train_and_test_model(X_train, X_test, y_train, y_test, MODEL_XGB, "XGB ERD/ERS real")
-# joblib.dump(model_XGB_erd_real, r'D:\inżynierka\motor imagery BCI\impl\models\bci_model_xgb_erd_ers_real_motion.pkl')
-#
-# model_LGBM_erd_real = train_and_test_model(X_train, X_test, y_train, y_test, MODEL_LGBM_REGULARIZED, "LGBM ERD/ERS real")
-# joblib.dump(model_LGBM_erd_real, r'D:\inżynierka\motor imagery BCI\impl\models\bci_model_lgbm_erd_ers_real_motion.pkl')
-#
+def save(model, name):
+    joblib.dump(model, os.path.join(MODELS_DIR, f'bci_model_{name}.pkl'))
 
-# ============ MRP FEATURES ============
 
-# ----------- IMAGERY MOTION ------------------
-train_list, test_list = split_train_test_path_list(cfg.IMAGERY_MOTION_MRP_PATH, cfg.MRP_FILE_PATTERN, train_ratio)
-X_train, X_test, y_train, y_test = get_X_and_Y_from_features(train_list, test_list)
+def run(xtr, xte, ytr, yte, gtr, gte, model, label, save_name):
+    groups  = np.concatenate([gtr, gte])
+    trained = train_and_test_model(xtr, xte, ytr, yte, model, label, groups=groups, results_path=RESULTS_PATH)
+    save(trained, save_name)
 
-model_LDA_mrp_img = train_and_test_model(X_train, X_test, y_train, y_test, MODEL_LDA_BEST, "LDA MRP img")
-joblib.dump(model_LDA_mrp_img, r'D:\inżynierka\motor imagery BCI\impl\models\bci_model_lda_mrp_img_motion.pkl')
 
-model_XGB_mrp_img = train_and_test_model(X_train, X_test, y_train, y_test, MODEL_XGB, "XGB MRP img")
-joblib.dump(model_XGB_mrp_img, r'D:\inżynierka\motor imagery BCI\impl\models\bci_model_xgb_mrp_img_motion.pkl')
+# ============ BASE features (raw EEG epochs) ============
 
-model_LGBM_mrp_img = train_and_test_model(X_train, X_test, y_train, y_test, MODEL_LGBM_REGULARIZED, "LGBM MRP img")
-joblib.dump(model_LGBM_mrp_img, r'D:\inżynierka\motor imagery BCI\impl\models\bci_model_lgbm_mrp_img_motion.pkl')
+# --- IMAGERY ---
+train_list, test_list = split_train_test_path_list(
+    cfg.IMAGERY_MOTION_PREPROCESSED_PATH, cfg.FILE_PATTERN, TRAIN_RATIO)
+X_train, X_test, y_train, y_test, g_train, g_test = get_X_and_Y_from_epochs(
+    train_list, test_list, ['T1', 'T2'], picks=SELECTED_CHANNELS, t_min=0.0, t_max=2.0)
 
-# ----------- REAL MOTION ------------------
-train_list, test_list = split_train_test_path_list(cfg.REAL_MOTION_MRP_PATH, cfg.MRP_FILE_PATTERN, train_ratio)
-X_train, X_test, y_train, y_test = get_X_and_Y_from_features(train_list, test_list)
+run(X_train, X_test, y_train, y_test, g_train, g_test, MODEL_LDA_BASE_IMAGERY,  "LDA base imagery",  "lda_base_imagery_motion")
+run(X_train, X_test, y_train, y_test, g_train, g_test, MODEL_SVC_BASE_IMAGERY,  "SVC base imagery",  "svc_base_imagery_motion")
+run(X_train, X_test, y_train, y_test, g_train, g_test, MODEL_RF_BASE_IMAGERY,   "RF base imagery",   "rf_base_imagery_motion")
+run(X_train, X_test, y_train, y_test, g_train, g_test, MODEL_XGB_BASE_IMAGERY,  "XGB base imagery",  "xgb_base_imagery_motion")
+run(X_train, X_test, y_train, y_test, g_train, g_test, MODEL_LGBM_BASE_IMAGERY, "LGBM base imagery", "lgbm_base_imagery_motion")
 
-model_LDA_mrp_real = train_and_test_model(X_train, X_test, y_train, y_test, MODEL_LDA_BEST, "LDA MRP real")
-joblib.dump(model_LDA_mrp_real, r'D:\inżynierka\motor imagery BCI\impl\models\bci_model_lda_mrp_real_motion.pkl')
+# --- REAL ---
+train_list, test_list = split_train_test_path_list(
+    cfg.REAL_MOTION_PREPROCESSED_PATH, cfg.FILE_PATTERN, TRAIN_RATIO)
+X_train, X_test, y_train, y_test, g_train, g_test = get_X_and_Y_from_epochs(
+    train_list, test_list, ['T1', 'T2'], picks=SELECTED_CHANNELS, t_min=0.0, t_max=2.0)
 
-model_XGB_mrp_real = train_and_test_model(X_train, X_test, y_train, y_test, MODEL_XGB, "XGB MRP real")
-joblib.dump(model_XGB_mrp_real, r'D:\inżynierka\motor imagery BCI\impl\models\bci_model_xgb_mrp_real_motion.pkl')
+run(X_train, X_test, y_train, y_test, g_train, g_test, MODEL_LDA_BASE_REAL,  "LDA base real",  "lda_base_real_motion")
+run(X_train, X_test, y_train, y_test, g_train, g_test, MODEL_SVC_BASE_REAL,  "SVC base real",  "svc_base_real_motion")
+run(X_train, X_test, y_train, y_test, g_train, g_test, MODEL_RF_BASE_REAL,   "RF base real",   "rf_base_real_motion")
+run(X_train, X_test, y_train, y_test, g_train, g_test, MODEL_XGB_BASE_REAL,  "XGB base real",  "xgb_base_real_motion")
+run(X_train, X_test, y_train, y_test, g_train, g_test, MODEL_LGBM_BASE_REAL, "LGBM base real", "lgbm_base_real_motion")
 
-model_LGBM_mrp_real = train_and_test_model(X_train, X_test, y_train, y_test, MODEL_LGBM_REGULARIZED, "LGBM MRP real")
-joblib.dump(model_LGBM_mrp_real, r'D:\inżynierka\motor imagery BCI\impl\models\bci_model_lgbm_mrp_real_motion.pkl')
+
+# ============ MRP features ============
+
+# --- IMAGERY ---
+train_list, test_list = split_train_test_path_list(
+    cfg.IMAGERY_MOTION_MRP_PATH, cfg.MRP_FILE_PATTERN, TRAIN_RATIO)
+X_train, X_test, y_train, y_test, g_train, g_test = get_X_and_Y_from_features(train_list, test_list)
+
+run(X_train, X_test, y_train, y_test, g_train, g_test, MODEL_LDA_MRP_IMAGERY,  "LDA MRP imagery",  "lda_mrp_imagery_motion")
+run(X_train, X_test, y_train, y_test, g_train, g_test, MODEL_SVC_MRP_IMAGERY,  "SVC MRP imagery",  "svc_mrp_imagery_motion")
+run(X_train, X_test, y_train, y_test, g_train, g_test, MODEL_RF_MRP_IMAGERY,   "RF MRP imagery",   "rf_mrp_imagery_motion")
+run(X_train, X_test, y_train, y_test, g_train, g_test, MODEL_XGB_MRP_IMAGERY,  "XGB MRP imagery",  "xgb_mrp_imagery_motion")
+run(X_train, X_test, y_train, y_test, g_train, g_test, MODEL_LGBM_MRP_IMAGERY, "LGBM MRP imagery", "lgbm_mrp_imagery_motion")
+
+# --- REAL ---
+train_list, test_list = split_train_test_path_list(
+    cfg.REAL_MOTION_MRP_PATH, cfg.MRP_FILE_PATTERN, TRAIN_RATIO)
+X_train, X_test, y_train, y_test, g_train, g_test = get_X_and_Y_from_features(train_list, test_list)
+
+run(X_train, X_test, y_train, y_test, g_train, g_test, MODEL_LDA_MRP_REAL,  "LDA MRP real",  "lda_mrp_real_motion")
+run(X_train, X_test, y_train, y_test, g_train, g_test, MODEL_SVC_MRP_REAL,  "SVC MRP real",  "svc_mrp_real_motion")
+run(X_train, X_test, y_train, y_test, g_train, g_test, MODEL_RF_MRP_REAL,   "RF MRP real",   "rf_mrp_real_motion")
+run(X_train, X_test, y_train, y_test, g_train, g_test, MODEL_XGB_MRP_REAL,  "XGB MRP real",  "xgb_mrp_real_motion")
+run(X_train, X_test, y_train, y_test, g_train, g_test, MODEL_LGBM_MRP_REAL, "LGBM MRP real", "lgbm_mrp_real_motion")
+
+
+# ============ ERD/ERS features ============
+
+# --- IMAGERY ---
+train_list, test_list = split_train_test_path_list(
+    cfg.IMAGERY_MOTION_ERD_ERS_PATH, cfg.ERD_ERS_FILE_PATTERN, TRAIN_RATIO)
+X_train, X_test, y_train, y_test, g_train, g_test = get_X_and_Y_from_features(train_list, test_list)
+
+run(X_train, X_test, y_train, y_test, g_train, g_test, MODEL_LDA_ERD_ERS_IMAGERY,  "LDA ERD/ERS imagery",  "lda_erd_ers_imagery_motion")
+run(X_train, X_test, y_train, y_test, g_train, g_test, MODEL_SVC_ERD_ERS_IMAGERY,  "SVC ERD/ERS imagery",  "svc_erd_ers_imagery_motion")
+run(X_train, X_test, y_train, y_test, g_train, g_test, MODEL_RF_ERD_ERS_IMAGERY,   "RF ERD/ERS imagery",   "rf_erd_ers_imagery_motion")
+run(X_train, X_test, y_train, y_test, g_train, g_test, MODEL_XGB_ERD_ERS_IMAGERY,  "XGB ERD/ERS imagery",  "xgb_erd_ers_imagery_motion")
+run(X_train, X_test, y_train, y_test, g_train, g_test, MODEL_LGBM_ERD_ERS_IMAGERY, "LGBM ERD/ERS imagery", "lgbm_erd_ers_imagery_motion")
+
+# --- REAL ---
+train_list, test_list = split_train_test_path_list(
+    cfg.REAL_MOTION_ERD_ERS_PATH, cfg.ERD_ERS_FILE_PATTERN, TRAIN_RATIO)
+X_train, X_test, y_train, y_test, g_train, g_test = get_X_and_Y_from_features(train_list, test_list)
+
+run(X_train, X_test, y_train, y_test, g_train, g_test, MODEL_LDA_ERD_ERS_REAL,  "LDA ERD/ERS real",  "lda_erd_ers_real_motion")
+run(X_train, X_test, y_train, y_test, g_train, g_test, MODEL_SVC_ERD_ERS_REAL,  "SVC ERD/ERS real",  "svc_erd_ers_real_motion")
+run(X_train, X_test, y_train, y_test, g_train, g_test, MODEL_RF_ERD_ERS_REAL,   "RF ERD/ERS real",   "rf_erd_ers_real_motion")
+run(X_train, X_test, y_train, y_test, g_train, g_test, MODEL_XGB_ERD_ERS_REAL,  "XGB ERD/ERS real",  "xgb_erd_ers_real_motion")
+run(X_train, X_test, y_train, y_test, g_train, g_test, MODEL_LGBM_ERD_ERS_REAL, "LGBM ERD/ERS real", "lgbm_erd_ers_real_motion")

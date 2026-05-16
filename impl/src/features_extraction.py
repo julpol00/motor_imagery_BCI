@@ -37,11 +37,13 @@ MRP_SLOPE_WINDOW = (-0.5, 0.5)
 def compute_band_power(X, sfreq, bands=FREQ_BANDS):
 
     #  X (epochs, channels, times)
-    n_epochs, n_channels, _ = X.shape
+    n_epochs, n_channels, n_times = X.shape
     band_powers = np.zeros((n_epochs, n_channels, len(bands)))
+    n_fft = min(256, n_times)
 
     for i, (fmin, fmax) in enumerate(bands.values()):
-        psds, _ = psd_array_welch(X, sfreq=sfreq, fmin=fmin, fmax=fmax, verbose=False)
+        psds, _ = psd_array_welch(X, sfreq=sfreq, fmin=fmin, fmax=fmax,
+                                   n_fft=n_fft, verbose=False)
         band_powers[:, :, i] = psds.mean(axis=-1)
 
     return band_powers
@@ -276,3 +278,55 @@ def save_erd_ers_features_v2(input_dir, output_dir, file_pattern=cfg.FILE_PATTER
         features, y = extract_erd_ers_v2(epochs, csp_filters, picks=picks, bands=bands)
         np.savez(output_path, X=features, y=y)
         print(f"  Saved: {os.path.basename(output_path)}  shape: {features.shape}")
+
+
+def extract_erd_ers_bins_baseline(epochs, picks=SELECTED_CHANNELS,
+                                   bins=_TIME_BINS,
+                                   baseline_tmin=_BASELINE_WINDOW[0],
+                                   baseline_tmax=_BASELINE_WINDOW[1]):
+    sfreq = epochs.info['sfreq']
+    times = epochs.times
+
+    data_t1 = epochs['T1'].get_data(picks=picks)
+    data_t2 = epochs['T2'].get_data(picks=picks)
+    X_raw = np.concatenate([data_t1, data_t2], axis=0)
+    y     = np.concatenate([np.zeros(len(data_t1)), np.ones(len(data_t2))])
+
+    base_mask = (times >= baseline_tmin) & (times <= baseline_tmax)
+    P_base    = compute_band_power(X_raw[:, :, base_mask], sfreq)  # (epochs, ch, bands)
+
+    bin_features = []
+    for t_start, t_end in bins:
+        bin_mask  = (times >= t_start) & (times <= t_end)
+        P_bin     = compute_band_power(X_raw[:, :, bin_mask], sfreq)
+        log_ratio = np.log(P_bin + 1e-10) - np.log(P_base + 1e-10)  # (epochs, ch, bands)
+
+        lr_flat   = log_ratio.reshape(len(X_raw), -1)  # 18 features
+
+        lat_list  = []
+        for left_idx, right_idx in CHANNEL_PAIRS:
+            lat_list.append(log_ratio[:, right_idx, :] - log_ratio[:, left_idx, :])
+        lat = np.hstack(lat_list)  # 9 features
+
+        bin_features.append(np.hstack([lr_flat, lat]))  # 27 per bin
+
+    return np.hstack(bin_features), y  # (epochs, 108)
+
+
+def save_erd_ers_bins_baseline(input_dir, output_dir, file_pattern=cfg.FILE_PATTERN,
+                                picks=SELECTED_CHANNELS):
+    os.makedirs(output_dir, exist_ok=True)
+
+    file_list = sorted(glob.glob(os.path.join(input_dir, file_pattern)))
+    print(f"Found {len(file_list)} files in {input_dir}")
+
+    for file_path in file_list:
+        fname        = os.path.basename(file_path)
+        subject_run  = fname.replace('.edf-epo.fif', '')
+        output_path  = os.path.join(output_dir, f"{subject_run}_erd_ers.npz")
+
+        epochs = mne.read_epochs(file_path, preload=True, verbose=False)
+        X, y   = extract_erd_ers_bins_baseline(epochs, picks)
+
+        np.savez(output_path, X=X, y=y)
+        print(f"  Saved: {os.path.basename(output_path)}  shape: {X.shape}")
