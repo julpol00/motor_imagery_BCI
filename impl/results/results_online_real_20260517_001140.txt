@@ -1,0 +1,6 @@
+Motion type : real
+Date        : 2026-05-17 00:11:40
+
+Total : 10/20
+LEFT  : 0/10
+RIGHT : 10/10

@@ -1,4 +1,17 @@
+"""
+Online BCI — EEG acquisition and classification.
+Listens for LSL markers from paradigm.py and classifies each trial.
+
+Usage:
+  cd src
+  python BCI.py
+
+Start BCI.py first. After EEG is ready, open paradigm.py in PsychoPy.
+"""
 import time
+from datetime import datetime
+from pathlib import Path
+
 import numpy as np
 import mne
 import joblib
@@ -6,155 +19,174 @@ from brainaccess.utils import acquisition
 from brainaccess.core.eeg_manager import EEGManager
 import config as cfg
 
-# 1. LOAD MODEL
-model_path = r'D:\inżynierka\motor imagery BCI\impl\models\bci_model_lda_real_motion.pkl'
-model = joblib.load(model_path)
+try:
+    from pylsl import StreamInlet, resolve_byprop
+    LSL_AVAILABLE = True
+except Exception as e:
+    LSL_AVAILABLE = False
+    print(f"[LSL] Could not load pylsl ({e}) — running in manual mode")
 
-cap = {2: "C3", 3: "C4", 4: "CP1", 5: "CP2", 0: "FC1", 1: "FC2"}
-device_name = "BA MINI 039"
-sfreq_original = 250
-sfreq_target = 160
-NUM_TRIALS = 10
+# ── MOTION TYPE SELECTION ─────────────────────────────────────────────────────
+while True:
+    motion = input("Motion type — enter 'imagery' or 'real': ").strip().lower()
+    if motion in ('imagery', 'real'):
+        break
+    print("  Invalid input. Type 'imagery' or 'real'.")
+
+# ── CONFIG ────────────────────────────────────────────────────────────────────
+MODEL_PATHS = {
+    'imagery': r'D:\inżynierka\motor imagery BCI\impl\models\bci_model_svc_base_imagery_motion.pkl',
+    'real':    r'D:\inżynierka\motor imagery BCI\impl\models\bci_model_svc_base_real_motion.pkl',
+}
+RESULTS_DIR  = Path(__file__).parent.parent / 'results'
+DEVICE_NAME  = "BA MINI 039"
+CAP          = {2: "C3", 3: "C4", 4: "CP1", 5: "CP2", 0: "FC1", 1: "FC2"}
+SFREQ_IN     = 250    # Hz — device sampling rate
+SFREQ_TARGET = 160    # Hz — resampled (matches training)
+NUM_TRIALS   = 50
+EPOCH_DUR    = 2.2    # s of EEG captured from imagery onset; model uses 0.0-2.0 s
+
+MARKER_LEFT  = 1      # marker from paradigm.py -> label 0
+MARKER_RIGHT = 2      # marker from paradigm.py -> label 1
+
+# ── MODEL ─────────────────────────────────────────────────────────────────────
+model = joblib.load(MODEL_PATHS[motion])
+print(f"[MODEL] Loaded: {MODEL_PATHS[motion]}")
+print(f"[CONFIG] Motion type: {motion.upper()}\n")
 
 
-def preprocess_online(raw):
-    # Re-reference
+# ── PREPROCESSING ─────────────────────────────────────────────────────────────
+def preprocess_online(raw: mne.io.Raw) -> np.ndarray:
     raw.set_eeg_reference(ref_channels='average', verbose=False)
-
-    #Notch filter
-    # nyquist_freq = raw.info['sfreq'] / 2
-    # raw.notch_filter(
-    #     picks=['eeg'],
-    #     freqs=np.arange(cfg.POWER_FREQ, nyquist_freq, cfg.POWER_FREQ),
-    #     n_jobs=cfg.N_JOBS,
-    #     verbose=False
-    # )
-
-    # Bandpass filter
+    raw.notch_filter(freqs=50.0, picks=['eeg'], verbose=False)
     raw.filter(
-        picks=['eeg'],
-        l_freq=0.05,
-        h_freq=30.0,
-        n_jobs=cfg.N_JOBS,
-        method='iir',
-        verbose=False
+        picks=['eeg'], l_freq=0.05, h_freq=30.0,
+        n_jobs=cfg.N_JOBS, method='iir', verbose=False,
     )
-
-    # 4. Baseline (0.0 - 0.2s)
-    # data = raw.get_data()
-    # times = raw.times
-    # baseline_idx = (times >= 0) & (times <= 0.2)
-    # if np.any(baseline_idx):
-    #     b_mean = np.mean(data[:, baseline_idx], axis=1, keepdims=True)
-    #     data -= b_mean
-    #     raw._data = data
-
-    target_channels = ["FC1", "FC2", "C3", "C4", "CP1", "CP2"]
-
-    try:
-        raw.pick(target_channels)
-    except ValueError as e:
-        print(f"Error: Channels not found. Available: {raw.ch_names}")
-        raise e
-
-    raw.resample(sfreq_target, verbose=False)
-
-    data = raw.get_data(tmin=0.2, tmax=2.0)
-
-    print(data.shape)
-    # Reshape (1, n_channels, n_times)
-    X = data[np.newaxis, :, :]
-    return X
+    raw.pick(["C3", "C4", "CP1", "CP2", "FC1", "FC2"])
+    raw.resample(SFREQ_TARGET, verbose=False)
+    data = raw.get_data(tmin=0.0, tmax=2.0)
+    return data[np.newaxis, :, :]
 
 
-# 2. MAIN LOOP
+# ── MAIN LOOP ─────────────────────────────────────────────────────────────────
 eeg = acquisition.EEG()
-correct_predictions = 0
-results_log = []
+trial_results = []
 
 with EEGManager() as mgr:
-    eeg.setup(mgr, device_name=device_name, cap=cap, sfreq=sfreq_original)
+    eeg.setup(mgr, device_name=DEVICE_NAME, cap=CAP, sfreq=SFREQ_IN)
     eeg.start_acquisition()
-    print("--- SYSTEM STARTED ---")
-    print("Acquisition active. Waiting 2 seconds for stabilization....")
+    print("--- EEG ACQUISITION ACTIVE ---")
+    print("Signal stabilization (2 s)...")
     time.sleep(2)
 
+    # ── LSL CONNECTION (after EEG is ready) ───────────────────────────────────
+    inlet = None
+    if LSL_AVAILABLE:
+        print("[LSL] Waiting for paradigm.py — open it in PsychoPy now...")
+        streams = resolve_byprop('name', 'BCI_Markers')
+        inlet = StreamInlet(streams[0])
+        print("[LSL] Stream connected — press SPACE in PsychoPy to begin.\n")
+    else:
+        print("Ready (manual mode). Waiting for trials...\n")
+
     try:
-        for i in range(1, NUM_TRIALS + 1):
-            print(f"\n>>> TRIAL {i} FROM {NUM_TRIALS} <<<")
+        trial_num = 0
+        while trial_num < NUM_TRIALS:
 
-            print("[ CONCENTRATION ] - look at the point")
-            time.sleep(3)
+            if inlet is not None:
+                sample, _ = inlet.pull_sample(timeout=120.0)
+                if sample is None:
+                    print("Marker timeout — stopping.")
+                    break
+                marker = int(sample[0])
+            else:
+                raw_input = input(
+                    f"[MANUAL] Trial {trial_num + 1} — press Enter for LEFT, type 'r'+Enter for RIGHT: "
+                )
+                marker = MARKER_RIGHT if raw_input.strip().lower() == 'r' else MARKER_LEFT
 
-            direction = np.random.choice(['LEFT', 'RIGHT'])
-            true_label = 0 if direction == 'LEFT' else 1
+            true_label = 0 if marker == MARKER_LEFT else 1
+            direction  = "LEFT" if marker == MARKER_LEFT else "RIGHT"
 
-            # send a marker to EEG stream
             mgr.annotate(str(true_label))
+            print(f"Trial {trial_num + 1:>2}/{NUM_TRIALS} [{direction}] — recording...")
 
-            print(f"!!! MOVE: {direction} !!!")
-
-            # waiting for move
-            time.sleep(2.2)
+            time.sleep(EPOCH_DUR + 0.2)
 
             eeg.get_mne()
             raw_all = eeg.data.mne_raw
-            events, event_id = mne.events_from_annotations(raw_all, verbose=False)
+            events, _ = mne.events_from_annotations(raw_all, verbose=False)
 
-            if len(events) > 0:
-                last_event_sample = events[-1][0]
-                t_start = last_event_sample / raw_all.info['sfreq']
-                t_max_needed = t_start + 2.2  # This is what the model needs
+            if len(events) == 0:
+                print("  No annotation found in stream — skipping trial.")
+                continue
 
-                current_max_time = raw_all.times[-1]
+            last_sample = events[-1][0]
+            t_start = last_sample / raw_all.info['sfreq']
+            t_end   = t_start + EPOCH_DUR
 
-                if current_max_time < t_max_needed:
-                    wait_time = t_max_needed - current_max_time + 0.2  # missing time + bufor
-                    print(f"Waiting for a data... ({wait_time:.2f}s)")
-                    time.sleep(wait_time)
+            if raw_all.times[-1] < t_end:
+                extra = t_end - raw_all.times[-1] + 0.1
+                print(f"  Waiting extra {extra:.2f} s for data...")
+                time.sleep(extra)
+                eeg.get_mne()
+                raw_all = eeg.data.mne_raw
 
-                    eeg.get_mne()
-                    raw_all = eeg.data.mne_raw
-
-                trial_raw = raw_all.copy().crop(tmin=t_start, tmax=t_start + 2.2)
+            trial_raw = raw_all.copy().crop(tmin=t_start, tmax=t_end)
 
             try:
-                X_online = preprocess_online(trial_raw)
-                prediction = model.predict(X_online)[0]
+                X = preprocess_online(trial_raw)
+                pred = model.predict(X)[0]
+                is_correct = (pred == true_label)
 
-                is_correct = (prediction == true_label)
-                if is_correct:
-                    correct_predictions += 1
+                pred_name = "LEFT" if pred == 0 else "RIGHT"
+                status    = "OK" if is_correct else "WRONG"
+                print(f"  -> Predicted: {pred_name}  [{status}]")
 
-                pred_name = "LEFT" if prediction == 0 else "RIGHT"
-                status = "GOOD" if is_correct else "FAULT"
-
-                print(f"RESULT: Detected {pred_name} | Status: {status}")
-                results_log.append(is_correct)
+                trial_results.append({'true_label': true_label, 'pred_label': int(pred)})
 
             except Exception as e:
-                print(f"Processing error in trial {i}: {e}")
+                print(f"  Processing error: {e}")
 
-            # Przerwa między próbami
-            if i < NUM_TRIALS:
-                print("Resting...")
-                time.sleep(3)
-
-        # --- PODSUMOWANIE ---
-        print("\n" + "=" * 30)
-        print("END OF SESSIONS - STATISTICS")
-        print("=" * 30)
-        accuracy = (correct_predictions / NUM_TRIALS) * 100
-        print(f"Number of trials:      {NUM_TRIALS}")
-        print(f"Correct:         {correct_predictions}")
-        print(f"Fault:           {NUM_TRIALS - correct_predictions}")
-        print(f"Accuracy (ACC): {accuracy:.2f}%")
-        print("=" * 30)
+            trial_num += 1
 
     except KeyboardInterrupt:
-        print("\nManually interrupted.")
+        print("\nSession interrupted manually.")
+
     finally:
         eeg.stop_acquisition()
         mgr.disconnect()
         eeg.close()
-        print("Device disconnected.")
+
+# ── RESULTS ───────────────────────────────────────────────────────────────────
+if not trial_results:
+    print("No trials completed.")
+else:
+    done          = len(trial_results)
+    total_correct = sum(r['pred_label'] == r['true_label'] for r in trial_results)
+
+    left_trials   = [r for r in trial_results if r['true_label'] == 0]
+    right_trials  = [r for r in trial_results if r['true_label'] == 1]
+    left_correct  = sum(r['pred_label'] == r['true_label'] for r in left_trials)
+    right_correct = sum(r['pred_label'] == r['true_label'] for r in right_trials)
+
+    summary_lines = [
+        f"Motion type : {motion}",
+        f"Date        : {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+        "",
+        f"Total : {total_correct}/{done}",
+        f"LEFT  : {left_correct}/{len(left_trials)}",
+        f"RIGHT : {right_correct}/{len(right_trials)}",
+    ]
+
+    print(f"\n{'=' * 32}")
+    for line in summary_lines:
+        print(line)
+    print(f"{'=' * 32}")
+
+    RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    out_path = RESULTS_DIR / f'results_online_{motion}_{timestamp}.txt'
+    out_path.write_text('\n'.join(summary_lines), encoding='utf-8')
+    print(f"\nResults saved -> {out_path}")
